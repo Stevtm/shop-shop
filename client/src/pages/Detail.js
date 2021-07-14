@@ -12,6 +12,7 @@ import {
 	UPDATE_PRODUCTS,
 	UPDATE_CART_QUANTITY,
 } from "../utils/actions";
+import { idbPromise } from "../utils/helpers";
 
 import Cart from "../components/Cart";
 
@@ -33,8 +34,15 @@ function Detail() {
 				type: UPDATE_PRODUCTS,
 				products: data.products,
 			});
+		} else if (!loading) {
+			idbPromise("products", "get").then((indexedProducts) => {
+				dispatch({
+					type: UPDATE_PRODUCTS,
+					products: indexedProducts,
+				});
+			});
 		}
-	}, [products, data, dispatch, id]);
+	}, [products, data, loading, dispatch, id]);
 
 	const addToCart = () => {
 		const itemInCart = cart.find((cartItem) => cartItem._id === id);
